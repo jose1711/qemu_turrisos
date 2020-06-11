@@ -26,7 +26,7 @@ Run TurrisOS inside QEMU
 
 ### WAN connection is not detected in TOS3
 
-Add `ifname 'eth1` into `/etc/config/network`
+Add `ifname 'eth1` into `/etc/config/network`, then reboot.
 
 ```
 config interface 'wan'
