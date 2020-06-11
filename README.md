@@ -24,6 +24,16 @@ Run TurrisOS inside QEMU
 
 ## Known issues
 
+### WAN connection is not detected in TOS3
+
+Add `ifname 'eth1` into `/etc/config/network`
+
+```
+config interface 'wan'
+        option proto 'dhcp'
+        option ifname 'eth1'
+```
+
 ### Guided mode may fail in TOS4
 
 Resolution:
