@@ -5,7 +5,7 @@ Run TurrisOS inside QEMU
 ```
    git clone https://github.com/jose1711/qemu_turrisos.git
    cd qemu_turrisos
-   curl -o zImage https://downloads.openwrt.org/snapshots/targets/armvirt/32/openwrt-armvirt-32-zImage
+   wget --output-document=zImage https://downloads.openwrt.org/snapshots/targets/armvirt/32/openwrt-armvirt-32-zImage
    mkdir root && cd root
 
    Turris OS3:
