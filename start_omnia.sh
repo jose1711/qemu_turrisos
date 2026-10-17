@@ -17,10 +17,27 @@ MEM=620
 
 cd $(dirname $0)
 
+if [ "$(id -u)" -ne 0 ]
+then
+  echo "Network setup requires root, run: sudo $0"
+  exit 1
+fi
+
+missing=""
+for cmd in qemu-system-arm ip iptables sysctl file
+do
+  command -v $cmd >/dev/null || missing="$missing $cmd"
+done
+if [ -n "$missing" ]
+then
+  echo "Missing commands:$missing"
+  exit 1
+fi
+
 # make sure kernel and rootfs are in place before touching the network
 if [ ! -f "${KERNEL}" ] || [ ! -d root/etc ]
 then
-  echo "Kernel (${KERNEL}) or rootfs (root/) is missing, see README.md"
+  echo "Kernel (${KERNEL}) or rootfs (root/) is missing, run ./fetch.sh first"
   exit 1
 fi
 

@@ -3,24 +3,21 @@ Run TurrisOS inside QEMU
 
 # Quick How-to
 ```
-   git clone https://github.com/jose1711/qemu_turrisos.git
+   git clone --depth 1 https://github.com/jose1711/qemu_turrisos.git
    cd qemu_turrisos
-   wget --output-document=zImage https://downloads.openwrt.org/snapshots/targets/armsr/armv7/openwrt-armsr-armv7-generic-kernel.bin
-   mkdir root && cd root
-
-   Turris OS3:
-     wget --output-document=- https://repo.turris.cz/archive/omnia/3.2.1/omnia-medkit-201610271801.tar.gz | sudo tar xvzf -
-
-   Turris OS4:
-     wget --output-document=- https://repo.turris.cz/archive/4.0.6/medkit/omnia-medkit-latest.tar.gz | sudo tar xvzf -
-
-   Turris OS (latest)
-     wget --output-document=- https://repo.turris.cz/hbs/medkit/medkit-omnia-latest.tar.gz | sudo tar xvzf -
-
-   cd ..
+   ./fetch.sh            # latest Turris OS, or e.g. ./fetch.sh 3.11.23
    sudo ./start_omnia.sh
    configure using wizard in browser: https://192.168.1.1
 ```
+
+`fetch.sh` downloads the OpenWrt kernel and Turris OS medkit (any version from
+https://repo.turris.cz/archive/), verifies their signatures against keys in
+`keys/` and extracts the medkit into `root/`. Signatures are checked with
+`signify`/`usign` or, when not installed, with python3 `cryptography` module.
+Old releases (e.g. 3.2.1) are not signed and require `--no-verify`.
+
+Required commands: `wget`, `tar`, `sha256sum`, `qemu-system-arm`, `ip`,
+`iptables`, `sysctl`, `file`.
 
 Network ports inside the VM: `eth0` = LAN0, `eth1` = WAN (QEMU user network, DHCP), `eth2` = LAN1.
 
