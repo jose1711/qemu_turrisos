@@ -80,7 +80,8 @@ fi
 # virtio NICs (otherwise no interfaces are detected and router mode is missing)
 for d in root/usr/lib/python3.*/site-packages/turrishw
 do
-  if [ -f "$d/turrishw.pyc" ]
+  # TOS5 has different turrishw API (no interface module), shim won't fit there
+  if [ -f "$d/turrishw.pyc" ] && [ -f "$d/interface.pyc" ]
   then
     echo "Installing turrishw QEMU shim into $d.."
     cp turrishw_qemu.py "$d/turrishw.py"
