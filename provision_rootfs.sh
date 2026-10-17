@@ -64,9 +64,31 @@ fi
 #nameserver 8.8.8.8
 #HERE
 
-echo "Patching utils.py.."
-# this unbreaks TOS4 guided mode
-cp turrishw_utils.py root/usr/lib/python3.6/site-packages/turrishw/utils.py
+# python patches are copies of TOS4 (python 3.6) sources, newer releases
+# would get downgraded code, so only apply them there
+if [ -d root/usr/lib/python3.6/site-packages/turrishw ]
+then
+  echo "Patching utils.py.."
+  # this unbreaks TOS4 guided mode
+  cp turrishw_utils.py root/usr/lib/python3.6/site-packages/turrishw/utils.py
 
-echo "Patching lan/__init__.py"
-cp lan_init.py root/usr/lib/python3.6/site-packages/foris_controller_backends/lan/__init__.py
+  echo "Patching lan/__init__.py"
+  cp lan_init.py root/usr/lib/python3.6/site-packages/foris_controller_backends/lan/__init__.py
+fi
+
+# TOS 6+ ships compiled turrishw only, shadow it with a shim recognizing
+# virtio NICs (otherwise no interfaces are detected and router mode is missing)
+for d in root/usr/lib/python3.*/site-packages/turrishw
+do
+  if [ -f "$d/turrishw.pyc" ]
+  then
+    echo "Installing turrishw QEMU shim into $d.."
+    cp turrishw_qemu.py "$d/turrishw.py"
+  fi
+done
+
+if [ -d root/etc/uci-defaults ] && [ ! -d root/usr/lib/python3.6 ]
+then
+  echo "Adding WAN network config.."
+  cp qemu_network.uci-defaults root/etc/uci-defaults/99-qemu-network
+fi

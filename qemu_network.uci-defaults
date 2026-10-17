@@ -1,0 +1,15 @@
+#!/bin/sh
+# OpenWrt generates network config for QEMU's virt board (LAN on eth0 only),
+# add WAN on eth1 and put eth2 into LAN bridge (see start_omnia.sh)
+uci -q get network.wan >/dev/null && exit 0
+
+uci batch <<EOF
+set network.wan=interface
+set network.wan.device=eth1
+set network.wan.proto=dhcp
+set network.wan6=interface
+set network.wan6.device=eth1
+set network.wan6.proto=dhcpv6
+add_list network.@device[0].ports=eth2
+commit network
+EOF

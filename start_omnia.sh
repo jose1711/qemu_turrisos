@@ -15,6 +15,15 @@ LAN2=ledetap1
 KERNEL=zImage
 MEM=620
 
+cd $(dirname $0)
+
+# make sure kernel and rootfs are in place before touching the network
+if [ ! -f "${KERNEL}" ] || [ ! -d root/etc ]
+then
+  echo "Kernel (${KERNEL}) or rootfs (root/) is missing, see README.md"
+  exit 1
+fi
+
 # by default Omnia is accessible on 192.168.1.1
 # let's make sure this IP is not local to our network
 ip r get 192.168.1.1 | grep -q via
@@ -23,8 +32,6 @@ then
   echo "Default Omnia's IP (192.168.1.1) is already part of your network, sorry.."
   exit 1
 fi
-
-cd $(dirname $0)
 
 # enable ip forwarding
 fwd_orig=$(sysctl net.ipv4.ip_forward | awk '{print $NF}')
@@ -51,7 +58,7 @@ qemu-system-arm \
    -nographic -M virt -kernel "${KERNEL}" -m "${MEM}" -no-reboot \
    -fsdev local,id=rootdev,path=root,security_model=none \
    -device virtio-9p-pci,fsdev=rootdev,mount_tag=/dev/root \
-   -append 'rootflags=trans=virtio,version=9p2000.L,cache=loose rootfstype=9p' \
+   -append 'console=ttyAMA0 rootflags=trans=virtio,version=9p2000.L,cache=loose rootfstype=9p' \
    -device virtio-net-pci,netdev=lan \
    -netdev tap,id=lan,ifname=$LAN1,script=no,downscript=no \
    -device virtio-net-pci,netdev=wan \
