@@ -3,7 +3,8 @@
 #   podman build -t turrisos --build-arg VERSION=5.0.3 .
 # run:
 #   podman run --rm -ti --init --cap-add=NET_ADMIN --device=/dev/net/tun \
-#     --sysctl net.ipv4.ip_forward=1 turrisos
+#     --sysctl net.ipv4.ip_forward=1 -p 127.0.0.1:8443:443 -p 127.0.0.1:2222:22 turrisos
+# then open https://localhost:8443 or ssh -p 2222 root@localhost
 # (works with docker as well)
 
 FROM debian:trixie-slim
@@ -20,4 +21,4 @@ COPY . .
 ARG VERSION=latest
 RUN ./fetch.sh $VERSION
 
-ENTRYPOINT ["./start_omnia.sh"]
+ENTRYPOINT ["./container_entrypoint.sh"]
