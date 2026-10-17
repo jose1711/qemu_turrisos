@@ -51,8 +51,9 @@ then
 fi
 
 # enable ip forwarding
+# (only when needed, /proc/sys is read-only inside containers)
 fwd_orig=$(sysctl net.ipv4.ip_forward | awk '{print $NF}')
-sysctl net.ipv4.ip_forward=1
+[ "${fwd_orig}" = 1 ] || sysctl net.ipv4.ip_forward=1
 
 # create tap interfaces which will be connected to Omnia's LAN NIC
 ip tuntap add mode tap $LAN1
@@ -92,7 +93,7 @@ ip addr flush dev $LAN2
 ip link set dev $LAN2 down
 ip tuntap del mode tap dev $LAN2
 
-sysctl net.ipv4.ip_forward=${fwd_orig}
+[ "${fwd_orig}" = 1 ] || sysctl net.ipv4.ip_forward=${fwd_orig}
 
 # remove fw rules
 iptables -D OUTPUT -o ledetap0 -j ACCEPT

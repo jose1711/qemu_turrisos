@@ -16,6 +16,15 @@ https://repo.turris.cz/archive/), verifies their signatures against keys in
 `signify`/`usign` or, when not installed, with python3 `cryptography` module.
 Old releases (e.g. 3.2.1) are not signed and require `--no-verify`.
 
+Alternatively run it in a container (VM console only, web UI is reachable
+from inside the container at https://192.168.1.1):
+
+```
+podman build -t turrisos .            # or --build-arg VERSION=5.0.3
+podman run --rm -ti --init --cap-add=NET_ADMIN --device=/dev/net/tun \
+  --sysctl net.ipv4.ip_forward=1 turrisos
+```
+
 Required commands: `wget`, `tar`, `sha256sum`, `qemu-system-arm`, `ip`,
 `iptables`, `sysctl`, `file`.
 
